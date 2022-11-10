@@ -1,0 +1,651 @@
+==========================
+Python library: etw-0.20.0
+==========================
+* Overview
+    - Release candidate for D4 drop "CUS high power".
+    - Targeted to E2 HW.
+    - Aligned with FPGA D4.3 drop.
+    - Adapted for E2 HW based on etw-0.19.0.
+
+* Installation
+    - It is recommended to use python virtual environment since different versions can coexist,
+      and it is easy to switch between them.
+
+      # Create python virtual environment
+      python3 -m venv <env_name>
+
+      # Activate python virtual environment (on Linux)
+      source <env_name>/bin/activate
+
+      # Activate python virtual environment (on Windows)
+      <env_name>\Scripts\activate.bat
+
+    - Install python libraries
+      # First time
+      pip3 install etw_rrh-x.y.z.tar.gz
+
+      # Upgrade
+      pip3 install --upgrade etw_rrh-x.y.z.tar.gz
+    
+    - Working directory: <python environment>/site-packages/etw/scripts/
+
+* Source code
+    - https://at.mavenir.com/bb/projects/RUSW/repos/etwpy/browse
+    - commit: 3b2ba5ffc7abfad1896d678d307a0ad68ce5c7f2
+    - tag: etw-0.20.0
+    - Corresponding dfe-eval commit: 35dc1111ffc9a52d219aaf09e33ce3d5e7e15f8d
+
+==========================
+* New features/upgrades
+    - Adapted for E2 HW based on etw-0.19.0.
+
+==========================
+* History:
+
+------- etw-0.19.0 --------
+    - Added support for getting MAX device ID and voltage for PA VDD. (rrh_set_qpam_ctrl.py)
+      Usage: python3 rrh_set_qpam_ctrl.py -j        : get MAX device ID, require argument -q
+             python3 rrh_set_qpam_ctrl.py -k        : get voltage PA VDD, require argument -q
+      Argument: 
+             -q, --qpamId                           : specify QPAM ID (0 or 1)
+
+    - Removed support for QPAM PA set ON/OFF.
+    - Removed support for QPAM MAX Chip SPI read/write.
+    - Updated single stack support for TRX and QPAM driver.
+
+------- etw-0.18.0 --------
+    - Obsolete
+
+------- etw-0.17.1 （E1）--------
+    - Fixed print for power measurement script.
+
+------- etw-0.17.0 （E1）--------
+    - Added script to configure database. (test_database.py)
+      Usage: python3 test_database.py -h         : option list
+             python3 test_database.py -c         : command input, e.g: db init
+						   usage:
+						      db init
+						      db list [hw | sw | all] 
+						      db read [path]
+						      db save hw
+						      db write [path] [-m] [value]
+						      db append [hw|sw] [path] [value] [value type]
+             python3 test_database.py -s         : saveflash, require filepath. e.g: "/home/root/production.db"
+
+    - Added missing API (get PAVDD voltage) for QPAM driver.
+    - Updated etap DMA_BASE_ADDRESS.
+
+------- etw-0.16.0 （E1）--------
+    - Identical with etw-0.14.0
+
+------- etw-0.15.0 (E2)--------
+    - Watchdog driver is activated to auto mode.
+    - Temperature supervision is temporarily disabled. 
+    - Added support for new drivers for E2 (Watchdog, Current Sensor, Temp Sensor, EEPROM).
+    - Added missing API (get PAVDD voltage) for QPAM driver.
+    - No change on usage from user perspective.
+
+------- etw-0.14.0 （E1）--------
+    - Added support for CC power measurement. (rrh_power_meas.py)
+      Usage: same as before. TX and RX antenna power for each enabled CC is also printed .
+
+    - Fixed active low for QPAM RX key setting. (rrh_set_qpam_ctrl.py)
+      Usage: same as before. Updates are not visible to user.
+
+------- etw-0.13.2 --------
+    - Refactored rrh_set_cfr_dpd.py, reverted QPAM bias protection value to -8V.
+    - Added back old version of test_dma_capture and test_dma_inject.
+
+------- etw-0.13.0 --------
+    - Updated script for Rx AGC configuration. (rrh_set_rx_agc.py)
+      Usage: python3 rrh_set_rx_agc.py -h         : option list
+             python3 rrh_set_rx_agc.py -s         : set Rx AGC configuration (choose from 0-individual port and 1-all ports)
+                                                    0-individual port, require arguments -p, -a, -y, -x, -u, -d, -o
+                                                    1-all ports, require arguments -p, -a, -y, -x, -u, -d
+             python3 rrh_set_rx_agc.py -c         : clear Rx AGC threshold event, require arguments -t, -b, -r
+             python3 rrh_set_rx_agc.py -m         : set RX AGC Mode (0-Manual and 1-Auto)
+      Arguments:
+             -p, --peak                           : specify Rx AGC peak (less than 0, in dBFS)
+             -a, --attenStep                      : specify Rx AGC CG attenuation step (greater than 0, in dB)
+             -y, --hysteresis                     : specify Rx AGC hysteresis (greater than 0, in dB)
+             -x, --rxCg0Atten                     : specify Rx AGC CG0 Attenuation (greater than 0, in dB)
+             -u, --cgStepUpCount                  : specify the number of threhold crossings to step up a CG level
+             -d, --cgStepDownCount                : specify the number of frames under the hysteresis threshold to step down a CG level
+             -o, --port                           : specify the port number
+             -t, --tileId                         : specify ADC tile ID
+             -b, --blockId                        : specify ADC block ID
+             -r, --thresholdSelect                : specify ADC threshold select (0 or 1)
+
+    - Updated DMA inject/capture scripts required by ETAP driver designer.
+      ( test_dma_inject.py and test_dma_capture.py)
+
+------- etw-0.12.0 --------
+    - CFR application merged to Test SW. Added support for CFR/DPD configuration. (rrh_set_cfr_dpd.py)
+      Usage: python3 rrh_set_cfr_dpd.py -h        : option list
+             python3 rrh_set_cfr_dpd.py -m        : set CFR-DPD Bypass Mode, choose from:
+                                                    0-CFR-DPD Both Bypassed
+                                                    1-CFR Enabled but DPD Bypassed
+                                                    2-CFR-DPD Both Enabled
+             python3 rrh_set_cfr_dpd.py -p        : set CFR output PAR (specify float value, e.g. 2.0)
+
+    - Added PA enable protection by validating bias settings.(rrh_set_qpam_ctrl.py)
+      Always check all bias values in range of [-5V, 0V) of all 4 ports belonging to the QPAM before enabling PA VDD.
+
+    - Updated sequence of QPAM configuration. (rrh_config_trx_qpam.py)
+      Set bias => check bias => enable PA VDD => enable TX key
+
+    - Added internal free running 1PPS clock option in clock source select script. (rrh_clock_select.py)
+      Option 11 is equivalent as to run devmem/poke to write registers: 0xa0140068 0x1
+                                                                        0xa01b0014 0x0
+                                                                        0xa01b0014 0x1
+      Usage: python3 rrh_clock_select.py -c       : select clock source
+                                                  : 0 - Clk104 - 156.25 MHz from 10G Ethernet
+                                                  : 1 - Clk104 - 390.625 MHz from 25G Ethernet
+                                                  : 2 - Clk104 - External 10 MHz
+                                                  : 3 - Clk104 - Internal 10.8 MHz TCXO
+                                                  : 4 - Si5381 - External 10 MHz
+                                                  : 5 - Si5518 - External 10 MHz
+                                                  : 6 - Si5518 - Pre-programmed for PTP
+                                                  : 11 - internal free running 1PPS
+
+    - Added/enabled temperature supervision on ETW service (target).
+      Supervise all TRX temperature sensors below 80 celsius degree. 
+      In case of overheating for more than 15sec, report fault and take action (not defined yet, just log fault message for now). 
+
+    - Fixed SP3T switch options.(rrh_set_trx_ctrl.py)
+      Usage: python3 rrh_set_trx_ctrl.py -b       : set BF Cal switch (choose from 1-SPDT, 2-SP3T, 3-ORx SPDT), require arguments -o
+                                                  : opMode options: SPDT (1-BF Calibration, 2-normal Tx operation)
+                                                                    SP3T (1-idle condition, 2-BF Cal Tx, 3-BF Cal Rx)
+                                                                    ORx BF Cal SPDT (1-BF Cal Rx, 2-OBX_A_QPAM1)
+      Arguments:
+             -o, --opMode                         : specify opMode (refer to different switches)
+
+------- etw-0.11.0 --------
+    - Added support for hardware tests as a separate distribution package (etw_rrh_hw_test-0.1.0.tar.gz)
+      Usage:
+         - First install new etw package: pip3 install etw_rrh-0.11.0.tar.gz
+         - Then install HW test package: pip3 install etw_rrh_hw_test-0.1.0.tar.gz
+         - Goto python install folder <path-to-python-environment>/site-packages/etw/hw_test/
+         - The following scripts are available:
+               fpga_init.py                         : python3 fpga_init.py <frequency> <testModel> <channelNumber>
+               qpam_init_port_1_and_port_1_on.py    : python3 qpam_init_port_1_and_port_1_on.py <qpamId> <channelNumber>
+               trx_init.py                          : python3 trx_init.py <channelNumber> <trxAttenuation>
+               rru_init_port_1.py                   : python3 rru_init_port_1.py <channelNumber> <frequency> <testModel> <trxAttenuation> <qpamId>
+               qpam_trx_disable_port_1.py           : python3 qpam_trx_disable_port_1.py <channelNumber>
+               cfrdpd-only.py                       : T.B.D
+
+           Note! rru_init_port_1.py performs complete initialization by calling the other scripts above it in the list
+
+	 - Test models (signal files) are available in a sub-folder called 'testmodels'
+           See fpga_init.py for an example how they can be accessed
+   
+    - Added support for TRX and QPAM individual port configuration. (rrh_config_trx_qpam.py) 
+      Usage: python3 rrh_config_trx_qpam.py -t     : switch TX path of TRX and QPAM (choose from 1-ON and 0-OFF)
+                                                   : optional argument -p, only one port is set if specified,
+                                                   : otherwise all ports are set
+      Arguments:
+             -p, --port                            : specify port number
+
+    - Added support for ORX power measurement when running power measurement for TX. (rrh_power_meas.py)
+      Usage: no change.
+
+    - Added requirement of QPAM ID when initialize QPAM MAX chips (rrh_set_qpam_ctrl.py)
+      Usage: python rrh_set_qpam_ctrl.py -i        : initialize QPAM MAX Chips, require argument -q
+      Arguments:
+             -q, --qpamId                          : specify QPAM ID (0 or 1)
+
+    - Fixed option description for ORx BF Cal SPDT to 1-BF Cal Rx and 2-OBX_A_QPAM1. (rrh_set_trx_ctrl.py)
+
+    - Added requirement on enable/disable when calling SetRxLNA. (rrh_set_trx_ctrl.py)
+      Usage: python3 rrh_set_trx_ctrl.py -l        : set up Rx LNA (choose from 0-disable and 1-enable), require argument -p
+                                                   : valid port range: [0,7]
+
+------- etw-0.10.0 --------
+    - Added script to configure ORAN Router for 1CC (rrh_config_oran.py).
+      Usage: python3 rrh_config_oran.py -h        : option list
+             python3 rrh_config_oran.py -d        : configure ORAN router for DL 1CC
+             python3 rrh_config_oran.py -u        : configure ORAN router for UL 1CC
+
+    - Updated 1CC radio level example script with optional configuration for ORAN and QPAM.
+      (rrh_config_1cc_bw100mhz.py). -o and -q can be used as add-on option.
+      Usage: python3 rrh_config_1cc_bw100mhz.py -h     : option list
+             python3 rrh_config_1cc_bw100mhz.py -o     : also configure ORAN router for DL 1CC
+             python3 rrh_config_1cc_bw100mhz.py -q     : also configure QPAM for all TX ports
+      Arguments:
+             -c, --centerFreqKhz                       : specify TX/RX RF center frequency (in kHz)
+
+------- etw-0.9.0 --------
+    - Added script to configure TRX and QPAM in FPGA team defined sequence (rrh_config_trx_qpam.py).
+      Usage: python3 rrh_config_trx_qpam.py -h        : option list
+             python3 rrh_config_trx_qpam.py -t        : switch TX path of TRX and QPAM (choose from 1-ON and 0-OFF)
+             python3 rrh_config_trx_qpam.py -r        : switch ON RX path of TRX and QPAM
+             python3 rrh_config_trx_qpam.py -o        : switch ON ORX path of TRX and QPAM
+
+    - Added support for clock source selection (rrh_clock_select.py).
+      It is optional to run this script when configuring RU. By default Si5518-External 10MHz is used.
+      In case other clock source needs to be used, this script MUST be run as first step before everything else. 
+      Usage: python3 rrh_clock_select.py -h           : option list
+             python3 rrh_clock_select.py -c           : select clock source
+                                                      : 0 - Clk104 - 156.25 MHz from 10G Ethernet
+                                                      : 1 - Clk104 - 390.625 MHz from 25G Ethernet
+                                                      : 2 - Clk104 - External 10 MHz
+                                                      : 3 - Clk104 - Internal 10.8 MHz TCXO
+                                                      : 4 - Si5381 - External 10 MHz
+                                                      : 5 - Si5518 - External 10 MHz
+                                                      : 6 - Si5518 - Pre-programmed for PTP
+
+------- etw-0.8.0 --------
+    - Updated Radio level example scripts. (rrh_config_1cc_bw100mhz.py and rrh_config_2cc_bw100mhz.py)
+      Used lower level scripts instead of primitive API. No change on the usage.
+
+    - Updated QPAM control script (rrh_set_qpam_ctrl.py).
+      Usage: python3 rrh_set_qpam_ctrl.py -s       : set PA bias voltage (choose from 0-default and 1-specific)
+                                                   : default option sets -8V to all chips/ports of a QPAM, requires arguments -q
+                                                   : specific option requires arguments -p, -b
+             python3 rrh_set_qpam_ctrl.py -g       : get PA bias voltage, require arguments -p
+             python3 rrh_set_qpam_ctrl.py -c       : get PA current, require argument -p
+             python3 rrh_set_qpam_ctrl.py -z       : get PA bias step size
+             python3 rrh_set_qpam_ctrl.py -a       : check PA current monitor availability
+      Arguments:
+             -p, --port                            : specify port number, valid range [0,7]')
+             -q, --qpamId                          : specify QPAM ID (0 or 1)')
+             -b, --biasVolt                        : specify bias voltage set in format of 7 float values in a string,')
+                                                   : e.g. '1.0 2.0 3.0 4.0 5.0 6.0 7.0' to represent 'preDriver, driverMainAmplifier,')
+                                                   : driverPeakingAmplifier, finalMainAmplifier1, finalMainAmplifier2,')
+                                                   : finalPeakingAmplifier1, finalPeakingAmplifier2' in order.')
+
+------- etw-0.7.0 --------
+    - Changed default RRH_HW_VERSION to E1 in target file.
+
+    - Updated for the fix on malfunction when adding and deleting carriers (rrh_set_carrier.py).
+      -m option only changes TX center frequency.
+      Usage: python3 rrh_set_carrier.py -m       : modify carrier TX center frequency, require arguments -n, -c'
+      Arguments:
+             -n, --name                          : specify carrier name
+             -c, --centerFreqKhz                 : specify center frequency (in kHz)
+
+    - Added support for setting ORX center frequency (rrh_set_rf_frequency.py).
+      Usage: python3 rrh_set_rf_frequency.py -o  : set ORX RF center frequency, require arguments -f
+      Arguments:
+             -f, --centerFreqKhz                 : specify center frequency (in kHz)
+
+    - Added support for DUC input chain selection (rrh_set_carrier.py).
+      Usage: python3 rrh_set_carrier.py -k       : select DUC input chain, choose from:
+                                                   0 - DIDM/ORAN->DL LPHY->DUC
+                                                   1 - ETAP DIDM->DL LPHY->DUC
+                                                   2 - ETAP ORAN->DL LPHY->DUC
+                                                   3 - U-Plane Memory Load->DL LPHY->DUC
+                                                   4 - UL LPHY->DL LPHY->DUC
+                                                   5 - ETAP TDM->DUC
+                                                   6 - DDC->DUC
+
+    - Added support for carrier gain settings (rrh_set_carrier.py).
+      Usage: python3 rrh_set_carrier.py -j       : set DUC/DDC gain for a carrier (specify float value in dB, e.g. 2.5)
+                                                 : require arguments -n, -u
+      Arguments:
+             -n, --name                          : specify carrier name
+             -u, --ducDdc                        : specify where to apply operation (0 for DUC and 1 for DDC)
+
+    - Renamed/updated radio level example script for 1CC from rrh_config_single_carrier_bw100m.py to rrh_config_1cc_bw100mhz.py
+      Added radio level example script for 2CC rrh_config_2cc_bw100mhz.py.
+      Usage: python3 rrh_config_1cc_bw100mhz.py  : set default RF center frequency (Fc=3.45GHz) to the band.
+                                                 : add 1CC to the middle of RF band.
+             python3 rrh_config_2cc_bw100mhz.py  : set default RF center frequency (Fc=3.45GHz) to the band.
+                                                 : add 1st CC to (Fc-50MHz) and 2nd CC to (Fc+50MHz) .
+      Arguments:
+             -c, --centerFreqKhz                 : specify TX/RX RF center frequency (in kHz)
+
+------- etw-0.6.0 --------
+    - Added script for TRX control. (rrh_set_trx_ctrl.py)
+      Usage: python3 rrh_set_trx_ctrl.py -h   : option list
+             python3 rrh_set_trx_ctrl.py -i   : initialize TRx control
+             python3 rrh_set_trx_ctrl.py -e   : enable object (choose from 1-Tx, 2-Rx, 3-ORx), require arguments -p
+                                              : valid port range: Tx-[0,3], Rx-[0,3], ORx-[0,1]
+             python3 rrh_set_trx_ctrl.py -d   : disable object (choose from 1-Tx, 2-Rx, 3-ORx), require arguments -p
+                                              : valid port range: Tx-[0,3], Rx-[0,3], ORx-[0,1]
+             python3 rrh_set_trx_ctrl.py -a   : set attenuation to (choose from 1-Tx, 2-Rx, 3-ORx and 4-Rx AGC DSA),
+                                              : require arguments -p, -v
+                                              : valid port range: Tx-[0,7], Rx-[0,7], ORx-[0,1], Rx AGC DSA-[0,7]
+             python3 rrh_set_trx_ctrl.py -b   : set BF Cal switch (choose from 1-SPDT, 2-SP3T, 3-ORx SPDT), require arguments -o
+                                              : opMode options: SPDT (1-BF Calibration, 2-normal Tx operation)
+                                                                SP3T (0-termination, 1-BF Cal Tx, 2-idle condition, 3-BF Cal Rx)
+                                                                ORx BF Cal SPDT (1-OBX_A_QPAM1/BF Cal Rx, 2-OBX_B_QPAM1)
+             python3 rrh_set_trx_ctrl.py -s   : set switch manager to control QPAM ORx Mux (0-PL, 1-PS)
+             python3 rrh_set_trx_ctrl.py -g   : get switch manager which controls QPAM ORx Mux
+             python3 rrh_set_trx_ctrl.py -l   : set Rx LNA, require argument -p
+                                              : valid port range: [0,7]
+      Arguments:
+             -p, --port                       : specify port or port pair (valid range refer to different options)
+             -v, --attenVal                   : specify attenuation value (in dB)
+                                              : note: in case of Rx AGC DSA, the attenuation is predefined as
+                                              :       0-0dB, 1-18dB, 2-12dB and 3-30dB
+             -o, --opMode                     : specify opMode (refer to different switches)
+
+    - Added script for QPAM control. (rrh_set_qpam_ctrl.py)
+      Usage: python3 rrh_set_qpam_ctrl.py -h  : option list
+             python3 rrh_set_qpam_ctrl.py -i  : initialize all QPAM MAX Chips
+             python3 rrh_set_qpam_ctrl.py -e  : enable QPAM port (choose from 1-Tx, 2-Rx), require argument -p
+                                              : valid port range [0,7]
+             python3 rrh_set_qpam_ctrl.py -d  : disable QPAM port (choose from 1-Tx, 2-Rx), require argument -p
+                                              : valid port range [0,7]
+             python3 rrh_set_qpam_ctrl.py -v  : configure PA VDD (choose from 0-disable. 1-enable), require argument -q
+             python3 rrh_set_qpam_ctrl.py -t  : set TDD mode, require arguments -q, -o
+             python3 rrh_set_qpam_ctrl.py -m  : set ORx Mux, require arguments -p, -f
+                                              : valid port range [0,7]
+             python3 rrh_set_qpam_ctrl.py -s  : set PA bias voltage (choose from 0-default and 1-specific)
+                                              : default option sets -8V to all chips/ports of a QPAM, requires arguments -q
+                                              : specific option requires arguments -n, -p, -b
+                                              : valid port range [0,19]
+             python3 rrh_set_qpam_ctrl.py -g  : get PA bias voltage, require arguments -n, -p
+                                              : valid port range [0,19]
+             python3 rrh_set_qpam_ctrl.py -u  : set PA ON for specified port, require argument -p
+                                              : valid port range [0,7]
+             python3 rrh_set_qpam_ctrl.py -x  : set PA OFF for all ports
+             python3 rrh_set_qpam_ctrl.py -c  : get PA current, require arguments -n, -p
+                                              : valid port range [0,19]
+             python3 rrh_set_qpam_ctrl.py -r  : read temperature from TX port, require argument -p
+                                              : valid port range [0,7]
+      Arguments:
+             -p, --port                       : specify port number
+             -q, --qpamId                     : specify QPAM ID (0 or 1)
+             -o, --opMode                     : specify opMode (0-TDD, 1-Tx Only, 2-Rx Only)
+             -f, --fwdRev                     : specify DPD feedback forward/reverse power sniff select (0-OBS, 1-VSWR)
+             -n, --chipId                     : specify MAX chip ID (1-QPAM1_SPI_LE_A, 2-QPAM1_SPI_LE_B,
+                                                                     3-QPAM2_SPI_LE_A, 4-QPAM2_SPI_LE_B)
+             -b, --biasVolt                   : specify bias voltage
+
+    - Added script for QPAM MAX chip register access via SPI. (rrh_qpam_ctrl_spi.py)
+      Usage: python3 rrh_set_qpam_ctrl.py -h  : option list
+             python3 rrh_set_qpam_ctrl.py -w  : write to MAX chip registers
+                                              : (choose from 1-QPAM1_SPI_LE_A, 2-QPAM1_SPI_LE_B,
+                                              :              3-QPAM2_SPI_LE_A, 4-QPAM2_SPI_LE_B)
+                                              : require arguments -a, -d
+             python3 rrh_set_qpam_ctrl.py -r  : read from MAX chip registers
+                                              : (choose from 1-QPAM1_SPI_LE_A, 2-QPAM1_SPI_LE_B,
+                                              :              3-QPAM2_SPI_LE_A, 4-QPAM2_SPI_LE_B)
+                                              : require argument -a
+      Arguments:
+             -a, --addr                       : specify SPI address (in Hex, e.g. 0x123)
+             -d, --data                       : specify write data (in Hex, e.g. 0x456)
+
+    - Cleaned up unsupported scripts.
+
+------- etw-0.5.1 --------
+    - Updated ORAN Router driver support mainly for FPGA testing purpose. No new features.
+
+------- etw-0.5.0 --------
+    - Added test_dma_inject.py for DMA injection example. (Previously called test_dma.py)
+      Binary input files (.bin) and decimal (.txt) files are supported
+      Usage: python3 test_dma_inject.py <filename>
+
+    - Added test_dma_capture.py for DMA capture example.
+      Binary input files (.bin) and decimal (.txt) files are supported
+      Usage: python3 test_dma_capture.py <number of samples> <output file>
+
+    - Added scripts for test signal file format conversion. 
+      - Convert decimal text signal file to binary file:
+      Usage: python3 sig_dec2bin.py <input file> <output file>
+      - Convert binary signal file to decimal text file:
+      Usage: python3 sig_bin2dec.py <input file> <output file>
+
+    - Added support for Rx AGC threshold event clearance. (rrh_set_rx_agc.py) 
+      Usage: python3 rrh_set_rx_agc.py -c    : clear Rx AGC threshold event, require arguments -t, -b, -r
+      Arguments:
+             -t, --tileId                    : specify ADC tile ID
+             -b, --blockId                   : specify ADC block ID
+             -r, --thresholdSelect           : specify ADC threshold select (0 or 1)
+
+    - Updated test_etap.py example code to reflect ETAP driver modification. 
+
+    - Improvement for code generation tool.
+
+------- etw-0.4.0 --------
+    - Added new argument PRACH pattern period in PRACH configuration. (rrh_set_prach.py)
+      Usage: python3 rrh_set_prach.py -a     : add PRACH to existing carrier, require arguments -c, -m, -o, -n, -f, -p, -s, -t
+      Arguments:
+             -p, --patternPeriod             : specify PRACH pattern period, valid range [1,256]
+       
+    - Added new script for Rx AGC configuration. (rrh_set_rx_agc.py)
+      Usage: python3 rrh_set_rx_agc.py -h    : option list
+             python3 rrh_set_rx_agc.py -s    : set Rx AGC threshold, require arguments -p, -a, -y
+      Arguments:
+             -p, --peak                      : specify Rx AGC peak (in dBFS)
+             -a, --attenStep                 : specify Rx AGC CG attenuation step (in dB)
+             -y, --hysteresis                : specify Rx AGC hysteresis (in dB)
+
+    - Supported ETAP, DFE and Power Measurement drivers access from ETW client.
+
+------- etw-0.3.0 --------
+    - Bugfix on Makefile which gave incorrect behaviour for ETAP proxy. No new feature.
+
+------- etw-0.2.0 --------
+    - Added option for carrier enable. (rrh_set_carrier.py)
+      Usage: python3 rrh_set_carrier.py -e    : enable carrier, require argument -n
+      Arguments:
+             -n, --name           : specify carrier name
+         
+    - Set DAC/ADC attenuation per port. (rrh_set_attenuation.py)
+      Usage: python3 rrh_set_attenuation.py -h   : option list
+             python3 rrh_set_attenuation.py -d   : set DAC attenuation, require arguments -p, -s
+             python3 rrh_set_attenuation.py -a   : set ADC attenuation, require arguments -p, -s
+      Arguments:
+             -p, --port           : specify port number
+             -s, --scale          : specify attenuation scale (in dB)
+
+    - Perform TX/RX power measurement. (rrh_power_meas.py)
+      Usage: python3 rrh_power_meas.py -h   : option list
+             python3 rrh_power_meas.py -t   : measure TX power for a specific subframe (default 0),
+                                              require argument -p, optional argument -s
+             python3 rrh_power_meas.py -r   : measure RX power for a specific subframe (default 0),
+                                              require argument -p, optional argument -s
+      Arguments:
+             -p, --port           : specify port number for measurement
+             -s, --subFrame       : specify subframe number for measurement, default is 0
+
+    - Added carrier enable in example script to setup an 100MHz bandwidth carrier. (rrh_config_single_carrier_bw100m.py)
+      Usage: python3 rrh_config_single_carrier_bw100m.py    : parameters are hardcoded.
+
+    - Added ETAP driver proxy to support remote ETAP driver calls (etw/lib/libetap.py)
+
+    - Added etap inject example (etw/scripts/test_etap.py) that uses the ETAP driver proxy
+      Usage: python3 test_etap.py <test-signal-file>
+             The test signal file shall contain a list of iq samples.
+             Each row shall have a I-sample and a Q-sample in decimal format separated by space.
+
+------- etw-0.1.0 --------
+    - Set IP address of target which ETW client will communicate with. (target.py)
+      Set correct value of RRH_HW_VERSION according to the instruction. (target.py)
+
+    - Set/change carrier configurations. (rrh_set_carrier.py)
+      Usage: python3 rrh_set_carrier.py -h    : option list
+             python3 rrh_set_carrier.py -i    : carrier initialization, require argument -p
+             python3 rrh_set_carrier.py -l    : list all carriers
+             python3 rrh_set_carrier.py -a    : add carrier, require arguments -n, -s, -f, -b, -c
+             python3 rrh_set_carrier.py -d    : delete carrier, require argument -n
+             python3 rrh_set_carrier.py -m    : modify carrier center frequency, require arguments -n, -c
+             python3 rrh_set_carrier.py -g    : get carrier's DFE Mixer status, require argument -n
+             python3 rrh_set_carrier.py -t    : set channel filter mode for carrier, require arguments -n, -u, -y
+             python3 rrh_set_carrier.py -x    : close carriers
+      Arguments:
+             -n, --name           : specify carrier name
+             -s, --scs_u          : specify subcarrier spacing (0 for 15kHz, 1 for 30kHz)
+             -f, --fftSize        : specify FFT size
+             -b, --chBwMhz        : specify channel bandwidth (in MHz)
+             -c, --centerFreqKhz  : specify center frequency (in kHz)
+             -u, --ducDdc         : specify where to set channel filter mode for (0 for DUC and 1 for DDC)
+             -y, --bypass         : specify channel filter mode (0 for enable and 1 for bypass)
+             -p, --prachType      : specify type of PRACH (0 for dynamic and 1 for static)
+         
+    - Set RF frequency for TX/RX (rrh_set_rf_frequency.py)
+      Usage: python3 rrh_set_rf_frequency.py -h   : option list
+             python3 rrh_set_rf_frequency.py -t   : set TX RF center frequency, require arguments -f, -c
+             python3 rrh_set_rf_frequency.py -r   : set RX RF center frequency, require arguments -f, -c
+      Arguments:
+             -f, --centerFreqKhz  : specify center frequency (in kHz)
+             -c, --refClock       : specify reference clock for DAC/ADC (1 for 245.76MHz and 2 for 491.52MHz)
+
+    - Add PRACH to an existing carrier (rrh_set_prach.py)
+      Usage: python3 rrh_set_prach.py -h    : option list
+             python3 rrh_set_prach.py -a    : add PRACH to existing carrier, require arguments -c, -m, -o, -n, -f, -s, -t
+      Arguments:
+             -c, --carrierName    : specify existing carrier name
+             -m, --format         : specify PRACH format, supported ones are:
+                                    0  -> NR_0
+                                    1  -> NR_1
+                                    2  -> NR_2
+                                    3  -> NR_3
+                                    4  -> NR_A1
+                                    5  -> NR_A2
+                                    6  -> NR_A3
+                                    7  -> NR_B1
+                                    8  -> NR_B2
+                                    9  -> NR_B3
+                                    10 -> NR_B4
+                                    11 -> NR_C0
+                                    12 -> NR_C2
+             -o, --offsetFreq     : specify PRACH offset frequency (in Hz)
+             -n, --numOfOccasions : specify PRACH number of occasions
+             -f, --frameNum       : specify PRACH frame number
+             -s, --subframeId     : specify PRACH subframe ID
+             -t, --timeOffsetTs   : specify PRACH time offset Ts
+
+    - Run Xilinx self test examples (rrh_run_self_test.py)
+      Usage: python3 rrh_run_self_test.py -h    : option list
+             python3 rrh_run_self_test.py -t    : specify which self test to run, require arguments -e, -p
+      Arguments:
+             -e, --example        : specify test example to run (1 for XDfeMixer and 2 for XDfeChanFilter)
+             -p, --prachType      : specify type of PRACH (0 for dynamic and 1 for static) for carrier init
+
+    - Set waveform capture and playback configurations (rrh_set_waveform.py)
+      Usage: python3 rrh_set_waveform.py -h    : option list
+             python3 rrh_set_waveform.py -p    : set waveform playback mode, require arguments -f -n
+             python3 rrh_set_waveform.py -c    : set waveform capture mode, require argument -f -n -l
+      Arguments:
+             -f, --filename       : specify full path of filename, only .txt and .bin are supported
+             -n, --numOfSamples   : specify number of 32-bit words in file
+             -l, --channel        : specify waveform channel
+
+    - Example script to setup an 100MHz bandwidth carrier. (rrh_config_single_carrier_bw100m.py)
+      Usage: python3 rrh_config_single_carrier_bw100m.py    : parameters are hardcoded.
+
+==========================
+* Usage examples    
+
+    - Initialize carriers in static prach mode.
+      python3 rrh_set_carrier.py -i -p 1
+
+    - Set TX RF frequency to 2.5GHz and choose 245.76MHz as DAC/ADC reference clock.
+      python3 rrh_set_rf_frequency.py -t -f 2500000 -c 1
+     
+    - Set ORX RF center frequency to 3.5GHz.
+      python3 rrh_set_rf_frequency.py -o -f 3500000
+
+    - Add new carrier CC0 with SCS=30kHz, FFT size=4096, Channel bandwidth=100MHz, Center frequency=2.5GHz.
+      python3 rrh_set_carrier.py -a -n CC0 -s 1 -f 4096 -b 100 -c 2500000
+
+    - Enable carrier.
+      python3 rrh_set_carrier.py -e -n CC0
+
+    - Set channel filter mode to "not bypass" to DDC of carrier CC0.
+      python3 rrh_set_carrier.py -t -n CC0 -u 1 -y 0
+
+    - Add PRACH in format NR_B2 to carrier CC0.
+      python3 rrh_set_prach.py -a -c CC0 -m 8 -o 30 -n 3 -f 1 -p 2 -s 2 -t 2
+
+    - Run self test on XDfeChanFilter.
+      python3 rrh_run_self_test.py -t -e 2 -p 1
+
+    - Set DAC attenuation -3.0dB to port 2.
+      python3 rrh_set_attenuation.py -d -p 2 -s -3.0
+
+    - Perform TX power measurement on Port 3 for subframe 1.
+      python3 rrh_power_meas.py -t -p 3 -s 1
+    
+    - Set Rx AGC thresholds. 
+      python3 rrh_set_rx_agc.py -s -p -1.5 -a 0.1 -y 0.1
+
+    - Inject test signal from test_signal.txt file to ETAP DMA.
+      python3 test_dma_inject.py test_signal.txt
+
+    - Enable TRX Tx on port pair 2. 
+      python3 rrh_set_trx_ctrl.py -e 1 -p 2
+
+    - Set attenuation 3.0dB to TRX RX port 1.
+      python3 rrh_set_trx_ctrl.py -a 2 -p 1 -v 3.0
+
+    - Set attenuation 12dB to RX AGC DSA on port 3.
+      python3 rrh_set_trx_ctrl.py -a 4 -p 3 -v 2
+
+    - Set opMode 1 BF Cal RX to TRX SP3T switch. 
+      python3 rrh_set_trx_ctrl.py -b 2 -o 1
+
+    - Set switch manager to PS to control QPAM ORx Mux.
+      python3 rrh_set_trx_ctrl.py -s 1
+
+    - Set up TRX RX LNA on port 3.
+      python3 rrh_set_trx_ctrl.py -l 1 -p 3
+
+    - Enable QPAM Tx on port 2. 
+      python3 rrh_set_qpam_ctrl.py -e 1 -p 2
+
+    - Enable PA VDD on QPAM 1.
+      python3 rrh_set_qpam_ctrl.py -v 1 -q 1
+
+    - Set mode to TDD on QPAM 0.
+      python3 rrh_set_qpam_ctrl.py -t -q 0 -o 0
+
+    - Set ORx Mux to VSWR on port 3.
+      python3 rrh_set_qpam_ctrl.py -m -p 3 -f 1
+
+    - Set default PA bias voltage (-8V) to all chips/ports of a QPAM (ID=1).
+      python3 rrh_set_qpam_ctrl.py -s 0 -q 1
+
+    - Set PA bias voltage '1.0 1.2 1.5 2.0 2.5 3.0 3.0' to 'preDriver, driverMainAmplifier, driverPeakingAmplifier, 
+      finalMainAmplifier1, finalMainAmplifier2, finalPeakingAmplifier1, finalPeakingAmplifier2' to port 1.
+      python3 rrh_set_qpam_ctrl.py -s 1 -p 1 -b '1.0 1.2 1.5 2.0 2.5 3.0 3.0'
+
+    - Set PA ON for QPAM port 4.
+      python3 rrh_set_qpam_ctrl.py -u -p 4
+
+    - Get PA current from port 7.
+      python3 rrh_set_qpam_ctrl.py -c -p 7
+
+    - Read temperature from QPAM TX port 5.
+      python3 rrh_set_qpam_ctrl.py -r -p 5
+
+    - Write to QPAM MAXChip 1-QPAM1_SPI_LE_A register (ADDR=0x123, DATA=0x456).
+      python3 rrh_qpam_ctrl_spi.py -w 1 -a 0x123 -d 0x456
+
+    - Read from QPAM MAXChip 2-QPAM1_SPI_LE_B register (ADDR=0x123).
+      python3 rrh_qpam_ctrl_spi.py -r 2 -a 0x123
+
+    - Select DUC input chain 2-ETAP ORAN->DL LPHY->DUC.
+      python3 rrh_set_carrier.py -k 2     
+
+    - Set carrier gain 2.5dB to DUC of CC1.
+      python3 rrh_set_carrier.py -j 2.5 -n CC1 -u 0
+  
+    - Bring up 1CC with 100MHz bandwidth at 3.4GHz (complete example script at radio level).
+      python3 rrh_config_1cc_bw100mhz.py -c 3400000
+
+    - Switch ON TX path of TRX and QPAM for all ports
+      python3 rrh_config_trx_qpam.py -t 1
+
+    - Switch ON TX path of TRX and QPAM for port 2
+      python3 rrh_config_trx_qpam.py -t 1 -p 2
+
+    - Select Si5518 pre-programmed for PTP as clock source.
+      python3 rrh_clock_select.py -c 6
+
+    - Configure ORAN Router for 1CC DL.
+      python3 rrh_config_oran.py -d
+
+    - Bring up 1CC with 100MHz bandwidth at 3.45GHz with ORAN (DL) and QPAM (all ports) configured. 
+      python3 rrh_config_1cc_bw100mhz.py -o -q   
+
+    - set CFR output PAR to 3.0
+      python3 rrh_set_cfr_dpd.py -p 3.0
+
+
+
+

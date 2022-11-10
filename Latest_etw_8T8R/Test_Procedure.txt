@@ -1,0 +1,15 @@
+Steps to follow for testing all 08 DL ports:
+
+- Reboot RU
+- Configure IP Address using cmd:
+    ifconfig eth0 192.168.1.10 up
+- Enable 1PPS in RU:
+    devmem 0xa01b0014 w 0x1  ## Run for Internal PPS
+   
+- Run the ETW Script 'rru_init8_etap.py <frequency> <testmodel> <trxAttenuation>' from Linux Terminal
+    TX Antenna Power is measured and reported for each port
+    Measure Constellation & ACP using Analyzer
+- Run the ETW Script 'qpam_trx_disable8_etap.py' after measuring all ports disable all ports by
+    
+    
+   
